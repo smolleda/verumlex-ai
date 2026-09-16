@@ -6,73 +6,192 @@
     <title>VERUMLEX AI — Core Engine</title>
     <style>
         :root {
-            --slate-950: #020617; --slate-900: #0f172a; --slate-800: #1e293b; --slate-700: #334155;
-            --slate-400: #94a3b8; --slate-200: #e2e8f0; --emerald-500: #10b981; --emerald-400: #34d399;
+            --slate-950: #020617;
+            --silver-satin: #f8fafc;
+            --slate-400: #94a3b8;
+            --slate-600: #475569;
+            --emerald-500: #10b981;
             --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; backface-visibility: hidden; -webkit-font-smoothing: antialiased; }
-        body { background-color: var(--slate-950); color: var(--slate-200); font-family: var(--font-sans); height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        .bunker-canvas { width: 100%; max-width: 1200px; height: calc(100vh - 80px); margin: 40px auto; padding: 0 40px; display: flex; flex-direction: column; gap: 24px; }
-        .control-bar { display: flex; justify-content: space-between; align-items: center; padding: 18px 28px; background-color: var(--slate-900); border: 1px solid var(--slate-800); border-radius: 12px; box-shadow: 0 4px 30px rgba(0,0,0,0.4); }
-        .brand-zone { display: flex; align-items: center; gap: 14px; }
-        .brand-logo { font-size: 16px; font-weight: 800; letter-spacing: 0.18em; color: #ffffff; }
-        .brand-tag { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--slate-400); text-transform: uppercase; border-left: 1px solid var(--slate-700); padding-left: 14px; }
-        .range-selector { background-color: var(--slate-950); border: 1px solid var(--slate-800); color: var(--slate-400); padding: 8px 16px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; cursor: pointer; outline: none; transition: all 0.2s ease; }
-        .range-selector:focus, .range-selector:hover { border-color: var(--emerald-500); color: var(--slate-200); }
-        .central-matrix { flex: 1; display: flex; flex-direction: column; background-color: var(--slate-900); border: 1px solid var(--slate-800); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
-        .terminal-stream { flex: 1; padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 28px; scroll-behavior: smooth; }
-        .stream-block { max-width: 760px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; animation: blockIn 0.3s ease forwards; }
-        .stream-block.system { border-left: 2px solid var(--emerald-500); padding-left: 20px; }
-        .block-meta { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--slate-400); }
-        .block-body { font-size: 14px; line-height: 1.65; color: var(--slate-200); }
-        .ingest-dropzone { max-width: 760px; width: 100%; margin: 20px auto 0 auto; border: 1px dashed var(--slate-800); background-color: rgba(2, 6, 23, 0.3); border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
-        .ingest-dropzone:hover { border-color: var(--emerald-500); background-color: rgba(16, 185, 129, 0.01); }
-        .dropzone-text { font-size: 12px; color: var(--slate-400); letter-spacing: 0.03em; }
-        .injection-area { padding: 24px 40px 40px 40px; background-color: var(--slate-900); border-top: 1px solid rgba(30, 41, 59, 0.4); }
-        .input-wrapper { max-width: 760px; width: 100%; margin: 0 auto; display: flex; align-items: center; background-color: var(--slate-950); border: 1px solid var(--slate-800); border-radius: 8px; padding: 6px; transition: border-color 0.2s ease; }
-        .input-wrapper:focus-within { border-color: var(--emerald-500); }
-        .kernel-input { flex: 1; background: none; border: none; outline: none; color: #ffffff; font-size: 14px; padding: 10px 14px; font-family: var(--font-sans); }
-        .kernel-input::placeholder { color: #475569; }
-        .submit-btn { background-color: var(--slate-900); border: 1px solid var(--slate-800); color: var(--slate-200); padding: 0 20px; height: 38px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; transition: all 0.2s ease; }
-        .submit-btn:hover { background-color: var(--emerald-500); border-color: var(--emerald-400); color: var(--slate-950); }
-        @keyframes blockIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .terminal-stream::-webkit-scrollbar { width: 4px; }
-        .terminal-stream::-webkit-scrollbar-track { background: transparent; }
-        .terminal-stream::-webkit-scrollbar-thumb { background: var(--slate-800); border-radius: 2px; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--slate-950);
+            color: var(--silver-satin);
+            font-family: var(--font-sans);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        .monolithic-canvas {
+            width: 100%;
+            max-width: 1100px;
+            height: calc(100vh - 100px);
+            margin: 50px auto;
+            padding: 0 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        .suspended-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.15);
+        }
+        .brand-logo {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 0.25em;
+            color: #ffffff;
+        }
+        .brand-tag {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: var(--slate-400);
+            text-transform: uppercase;
+            margin-left: 16px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding-left: 16px;
+        }
+        .glass-control {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4px;
+            border-radius: 8px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .range-selector {
+            background: none;
+            border: none;
+            color: var(--slate-400);
+            padding: 6px 16px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            outline: none;
+            text-transform: uppercase;
+            transition: color 0.2s ease;
+        }
+        .range-selector:hover { color: #ffffff; }
+        .workspace-stream {
+            flex: 1; width: 100%; max-width: 850px; margin: 0 auto;
+            padding: 40px 0; overflow-y: auto; display: flex;
+            flex-direction: column; gap: 36px;
+        }
+        .stream-block {
+            width: 100%; display: flex; flex-direction: column; gap: 12px;
+            animation: textReveal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .stream-block.system { border-left: 1px solid var(--emerald-500); padding-left: 24px; }
+        .block-meta { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; color: var(--slate-400); }
+        .block-body { font-size: 16px; line-height: 1.75; color: var(--silver-satin); text-align: justify; }
+        .infinite-dropzone {
+            width: 100%; max-width: 850px; margin: 0 auto 24px auto;
+            border: 1px dashed rgba(148, 163, 184, 0.25); border-radius: 12px;
+            padding: 32px; text-align: center; cursor: pointer;
+            background-color: rgba(2, 6, 23, 0.2); transition: all 0.3s ease;
+        }
+        .infinite-dropzone:hover { border-color: var(--emerald-500); background-color: rgba(16, 185, 129, 0.01); }
+        .dropzone-text { font-size: 12px; color: var(--slate-400); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+        .control-pod { width: 100%; max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; }
+        .input-wrapper { display: flex; align-items: center; background-color: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 6px; transition: border-color 0.2s ease; }
+        .input-wrapper:focus-within { border-color: rgba(255, 255, 255, 0.3); }
+        .kernel-input { flex: 1; background: none; border: none; outline: none; color: #ffffff; font-size: 15px; padding: 12px 18px; font-family: var(--font-sans); }
+        .kernel-input::placeholder { color: rgba(148, 163, 184, 0.35); }
+        .submit-btn { background-color: transparent; border: 1px solid rgba(255, 255, 255, 0.15); color: var(--silver-satin); padding: 0 24px; height: 40px; border-radius: 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.08em; cursor: pointer; text-transform: uppercase; transition: all 0.2s ease; }
+        .submit-btn:hover { background-color: var(--silver-satin); color: var(--slate-950); border-color: var(--silver-satin); }
+        .workspace-stream::-webkit-scrollbar { width: 0px; background: transparent; }
+        @keyframes textReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <div class="bunker-canvas">
-        <header class="control-bar">
-            <div class="brand-zone"><span class="brand-logo">VERUMLEX AI</span><span class="brand-tag">On-Premise Core v1.0</span></div>
+    <div class="monolithic-canvas">
+        <header class="suspended-header">
             <div>
+                <span class="brand-logo">VERUMLEX</span>
+                <span class="brand-tag">Core v1.0 — On-Premise</span>
+            </div>
+            <div class="glass-control">
                 <select class="range-selector" id="rangeDiscriminator">
-                    <option value="enterprise">MODO CORPORATIVO / ENTERPRISE</option>
-                    <option value="professional" selected>MODO PROFESIONAL</option>
-                    <option value="student">MODO ESTUDIANTE</option>
+                    <option value="enterprise">Modo Corporativo</option>
+                    <option value="professional" selected>Modo Profesional</option>
+                    <option value="student">Modo Estudiante</option>
                 </select>
             </div>
         </header>
-        <main class="central-matrix">
-            <div class="terminal-stream" id="terminalStream">
-                <div class="stream-block system">
-                    <div class="block-meta">Core Status — Inicialización Limpia</div>
-                    <div class="block-body">Estructura visual estática Jamstack renderizada correctamente. El sistema permanece en modo pasivo a costo cero de red, listo para la inyección de las compuertas lógicas de memoria y conectores universales.</div>
-                </div>
+        <main class="workspace-stream" id="terminalStream">
+            <div class="stream-block system">
+                <div class="block-meta">Core Status // Inicialización Autoritaria</div>
+                <div class="block-body">Ecosistema Jamstack purificado bajo el estándar de lienzo infinito. El software opera libre de interfaces enrejadas o cajas contenedoras artificiales, optimizando la visualización de datos de ciberseguridad a pantalla completa. El núcleo permanece en espera asíncrona.</div>
             </div>
-            <footer class="injection-area">
-                <div class="ingest-dropzone" id="dropzone"><span class="dropzone-text">Arrastra bases de datos o documentos para activar el cribado ciego (.pdf, .csv, .json)</span></div>
-                <div class="input-wrapper" style="margin-top: 20px;">
-                    <input type="text" class="kernel-input" id="kernelInput" placeholder="Inyectar instrucción o comando al núcleo corporativo..." autocomplete="off">
-                    <button class="submit-btn" id="sendBtn">EJECUTAR</button>
-                </div>
-            </footer>
         </main>
+        <footer class="control-pod">
+            <div class="infinite-dropzone" id="dropzone">
+                <span class="dropzone-text">Arrastrar base de datos o inventario corrupto para activar cribado ciego (.pdf, .csv, .json)</span>
+            </div>
+            <div class="input-wrapper">
+                <input type="text" class="kernel-input" id="kernelInput" placeholder="Inyectar instrucción al núcleo de inteligencia..." autocomplete="off">
+                <button class="submit-btn" id="sendBtn">Ejecutar</button>
+            </div>
+        </footer>
     </div>
     <script>
-        document.getElementById('rangeDiscriminator').addEventListener('change', (e) => {
-            console.log(`[Discriminador] Rango mutado en caliente a: ${e.target.value}`);
-        });
+        const CONFIG_ROUTER = { mode: 'sandbox', maxCharacters: { enterprise: 4000, professional: 8000, student: 12000 } };
+        let sessionHistory = [];
+        const discriminator = document.getElementById('rangeDiscriminator');
+        const terminalStream = document.getElementById('terminalStream');
+        const kernelInput = document.getElementById('kernelInput');
+        const sendBtn = document.getElementById('sendBtn');
+        function appendMessageBlock(role, text) {
+            const block = document.createElement('div');
+            block.className = `stream-block \${role === 'user' ? '' : 'system'}`;
+            const meta = document.createElement('div');
+            meta.className = 'block-meta';
+            meta.innerText = role === 'user' ? 'Inyección de Comando // Operador' : `Respuesta Núcleo // \${discriminator.value.toUpperCase()}`;
+            const body = document.createElement('div');
+            body.className = 'block-body';
+            body.innerHTML = text;
+            block.appendChild(meta);
+            block.appendChild(body);
+            terminalStream.appendChild(block);
+            terminalStream.scrollTop = terminalStream.scrollHeight;
+        }
+        async function executeKernelCommand() {
+            const query = kernelInput.value.trim();
+            if (!query) return;
+            appendMessageBlock('user', query);
+            kernelInput.value = '';
+            sessionHistory.push({ role: 'user', content: query });
+            setTimeout(() => {
+                let response = "";
+                if (discriminator.value === 'enterprise') {
+                    response = "AUDITORÍA FORENSE // ANÁLISIS CRÍTICO: Incidencia identificada de manera homogénea. El Middleware de memoria serverless ha calculado el peso bruto de la cadena de caracteres en caliente. Se ha bloqueado la saturación de tokens de manera local en el hilo de ejecución de la pestaña del cliente, forzando una reducción drástica de costos operativos.";
+                } else if (discriminator.value === 'professional') {
+                    response = "CONMUTADOR AGNÓSTICO // PIPELINE: La llamada fetch asíncrona simulada se ejecuta de manera transparente. El enrutamiento lógico del ConfigRouter está preparado para desviar las peticiones de desarrollo hacia endpoints externos a costo cero, manteniendo la privacidad absoluta de la propiedad intelectual.";
+                } else {
+                    response = "MENTORÍA // CONCEPTOS CORE: El lienzo monolítico infinito elimina las grillas y bordes tradicionales para permitir que el analista concentre el 100% de su capacidad cognitiva en las discrepancias detectadas, eliminando distractores visuales del entorno.";
+                }
+                appendMessageBlock('system', response);
+                sessionHistory.push({ role: 'assistant', content: response });
+            }, 450);
+        }
+        sendBtn.addEventListener('click', executeKernelCommand);
+        kernelInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeKernelCommand(); });
     </script>
 </body>
 </html>
