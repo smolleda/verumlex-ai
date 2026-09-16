@@ -60,33 +60,135 @@
             <button class="execute-btn" id="execBtn">Ejecutar</button>
         </div>
     </main>
+    
     <script>
-        const roleSelect = document.getElementById("roleSelect");
-        const statusTag = document.querySelector(".status-tag");
-        const mainText = document.querySelector(".main-text");
-        const cmdInput = document.getElementById("cmdInput");
-        const execBtn = document.getElementById("execBtn");
-        const neuralDropzone = document.getElementById("neuralDropzone");
-        const actionCaption = document.getElementById("actionCaption");
-        let contextBuffer = [];
-        const matrixPersonalities = {
-            PROFESIONAL: { tag: "Modo Profesional Activo // Copiloto Senior", text: "Ecosistema serverless configurado en Modo Consultor. La arquitectura optimiza la generación de estrategias corporativas, auditorías contractuales y planes de mercado con precisión milimétrica agnóstica. Listo para el despliegue.", caption: "INYECCIÓN DE NÚCLEO PASIVA // DEPOSITAR INVENTARIO O DATA" },
-            CORPORATIVO: { tag: "Modo Enterprise Activo // Auditor Forense Severo", text: "Matriz cognitiva ajustada para la Alta Dirección. El middleware prioriza de forma estricta el análisis duro de KPIs, control de SLAs y mitigación de riesgos financieros y operativos. Trituración de datos a peso cero activa.", caption: "AUDITORÍA INMEDIATA // ARRASTRAR BASE DE DATOS O BALANCE" },
-            ESTUDIANTE: { tag: "Modo Labs Activo // Mentor Académico", text: "Entorno de aprendizaje profundo activo. El núcleo desmenuza arquitecturas RAG, lógica de ingeniería y estructuras complejas mediante lenguaje directo, accesible y esquemas de cuestionario. Guardia pasiva en espera.", caption: "CRIBADO COGNITIVO // ARRASTRAR TEXTO O MATERIAL DE ESTUDIO" }
+        // --- 1. CONFIGROUTER: LOGÍSTICA DE ENMASCARAMIENTO (CAJA NEGRA) ---
+        const CONFIG_ROUTER = {
+            mode: "production", 
+            apiEndpoint: "https://deepseek.com",
+            maxCharacters: {
+                enterprise: 4000,
+                professional: 8000,
+                student: 12000
+            },
+            authCredential: "Bearer DS_FREE_ROUTER_PROXY_SECURE_TOKEN"
         };
-        roleSelect.addEventListener("change", (e) => {
-            const mode = e.target.value; statusTag.textContent = matrixPersonalities[mode].tag; mainText.textContent = matrixPersonalities[mode].text;
-            if(!neuralDropzone.classList.contains('dragover')) { actionCaption.textContent = matrixPersonalities[mode].caption; }
+
+        // Memoria de contexto en la caché de la pestaña
+        let contextBuffer = [];
+        let totalWeight = 0;
+
+        // Elementos de la interfaz vinculados a tu lienzo blanco
+        const discriminator = document.getElementById("rangeDiscriminator");
+        const terminalStream = document.getElementById("terminalStream");
+        const kernelInput = document.getElementById("kernelInput");
+        const execBtn = document.getElementById("sendBtn");
+
+        // --- 2. MIDDLEWARE DE ACENTOS PROTEGIDOS (CERO ROMBOS) ---
+        function cleanStringUTF8(text) {
+            return decodeURIComponent(encodeURIComponent(text));
+        }
+
+        // --- 3. FILTER DE PERSONALIDAD POR RANGOS NATIVO ---
+        function getSystemPrompt() {
+            const currentRange = discriminator.value;
+            const prompts = {
+                enterprise: "Actua como un Auditor Forense severo, seco, enfocado estrictamente en metricas duras, SLAs y reduccion de costos operativos corporativos. Respuestas cortas y directas al grano.",
+                professional: "Actua como un Copiloto Tecnico Senior de alta gama. Estructura estrategias de mercado con precision milimetrica y logica limpia.",
+                student: "Actua como un Mentor Metodico. Desmenuza conceptos complejos en lenguaje accesible e inyecta explicaciones didacticas paso a paso."
+            };
+            return cleanStringUTF8(prompts[currentRange] || prompts.professional);
+        }
+
+        // --- 4. ACOPLAMIENTO DE LA VENTANA DESLIZANTE ANTI-COLAPSO ---
+        function applySlidingContextWindow() {
+            const currentRange = discriminator.value;
+            const characterLimit = CONFIG_ROUTER.maxCharacters[currentRange];
+            
+            totalWeight = contextBuffer.reduce((acc, msg) => acc + msg.content.length, 0);
+            
+            while (totalWeight > characterLimit && contextBuffer.length > 1) {
+                console.warn("[Middleware] Limite de contexto excedido. Purgando mensaje mas antiguo.");
+                contextBuffer.shift(); 
+                totalWeight = contextBuffer.reduce((acc, msg) => acc + msg.content.length, 0);
+            }
+        }
+
+        // --- RENDERIZADO REACTIVO EN EL LIENZO BLANCO ---
+        function appendMessageBlock(role, text) {
+            const block = document.createElement("div");
+            block.className = `stream-block ${role === "user" ? "" : "system"}`;
+            
+            const meta = document.createElement("div");
+            meta.className = "block-meta";
+            meta.innerText = role === "user" ? "INYECCION DE COMANDO // OPERADOR" : `RESPUESTA NUCLEO // ${discriminator.value.toUpperCase()}`;
+            
+            const body = document.createElement("div");
+            body.className = "block-body";
+            body.innerText = cleanStringUTF8(text);
+            
+            block.appendChild(meta);
+            block.appendChild(body);
+            terminalStream.appendChild(block);
+            
+            terminalStream.scrollTop = terminalStream.scrollHeight;
+        }
+
+        // --- 5. PROGRAMACIÓN DEL FETCH ASÍNCRONO SEGURO ---
+        async function executeKernelCommand() {
+            const rawQuery = kernelInput.value.trim();
+            if (!rawQuery) return;
+
+            const query = cleanStringUTF8(rawQuery);
+            appendMessageBlock("user", query);
+            
+            // Resetear la barra de input inmediatamente para evitar doble envio (Cero Lag)
+            kernelInput.value = "";
+            
+            contextBuffer.push({ role: "user", content: query });
+            applySlidingContextWindow();
+
+            try {
+                // LLamada fetch asincrona directa desde Brave sin usar backends locales
+                const response = await fetch(CONFIG_ROUTER.apiEndpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": CONFIG_ROUTER.authCredential
+                    },
+                    body: JSON.stringify({
+                        model: "deepseek-r1",
+                        messages: [
+                            { role: "system", content: getSystemPrompt() },
+                            ...contextBuffer
+                        ],
+                        temperature: 0.3
+                    })
+                });
+
+                if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
+
+                const data = await response.json();
+                const systemText = data.choices[0].message.content;
+                
+                appendMessageBlock("assistant", systemText);
+                contextBuffer.push({ role: "assistant", content: systemText });
+                applySlidingContextWindow();
+
+            } catch (error) {
+                console.error("[Kernel Error]", error);
+                appendMessageBlock("assistant", "ERROR CRITICO // CONMUTADOR DE RED: No se pudo establecer la conexion externa con el modelo. Verifique la VPN o la ruta de red en Cloudflare.");
+            }
+        }
+
+        // Enlace de los eventos del click y el enter de tu boton Ejecutar
+        execBtn.addEventListener("click", executeKernelCommand);
+        kernelInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") executeKernelCommand();
         });
-        window.addEventListener("dragover", (e) => e.preventDefault(), false);
-        window.addEventListener("drop", (e) => e.preventDefault(), false);
-        neuralDropzone.addEventListener("dragenter", (e) => { e.preventDefault(); neuralDropzone.classList.add("dragover"); actionCaption.textContent = "[ DETECTANDO MATRIZ DE DATOS... SUELTE PARA ASIMILAR ]"; });
-        neuralDropzone.addEventListener("dragleave", () => { neuralDropzone.classList.remove("dragover"); const mode = roleSelect.value; actionCaption.textContent = matrixPersonalities[mode].caption; });
-        neuralDropzone.addEventListener("drop", (e) => {
-            e.preventDefault(); neuralDropzone.classList.remove("dragover"); neuralDropzone.classList.add("processing"); actionCaption.textContent = "[ PROCESANDO ANÁLISIS SOBERANO SERVERLESS... ]";
-            setTimeout(() => { neuralDropzone.classList.remove("processing"); const mode = roleSelect.value; actionCaption.textContent = "[ ASIMILACIÓN COMPLETADA CON ÉXITO ]"; setTimeout(() => { actionCaption.textContent = matrixPersonalities[mode].caption; }, 2000); }, 2500);
-        });
-        execBtn.addEventListener("click", () => { const prompt = cmdInput.value.trim(); if(!prompt) return; contextBuffer.push(prompt); if(contextBuffer.length > 5) { contextBuffer.shift(); statusTag.textContent = "Atención: Ventana Deslizante Activada // Contexto Comprimido"; } cmdInput.value = ""; });
     </script>
 </body>
 </html>
+
+
+
