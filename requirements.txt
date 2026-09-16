@@ -1,0 +1,10 @@
+﻿@echo off
+fastapi
+uvicorn
+python-dotenv
+pandas
+pypdf
+openpyxl
+rapidfuzz
+tiktoken
+chromadb
