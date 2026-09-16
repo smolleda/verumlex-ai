@@ -181,14 +181,91 @@
             }
         }
 
+        
+
+
+
+        
         // Enlace de los eventos del click y el enter de tu boton Ejecutar
         execBtn.addEventListener("click", executeKernelCommand);
         kernelInput.addEventListener("keypress", (e) => {
             if (e.key === "Enter") executeKernelCommand();
+        });        // --- VECTOR A: KERNEL DE INGESTA POR CLIC Y PEGADO DIRECTO ---
+        const dropzone = document.getElementById("dropzone");
+
+        // Crear un input file invisible en el DOM de forma dinamica
+        const hiddenFileInput = document.createElement("input");
+        hiddenFileInput.type = "file";
+        hiddenFileInput.style.display = "none";
+        hiddenFileInput.accept = ".csv,.json,.txt";
+        document.body.appendChild(hiddenFileInput);
+
+        // 1. Al hacer clic sobre el circulo azul, desplegar el administrador de archivos nativo
+        dropzone.addEventListener("click", () => {
+            hiddenFileInput.click();
         });
+
+        // Capturar el archivo seleccionado desde el explorador de archivos de Windows
+        hiddenFileInput.addEventListener("change", (e) => {
+            if (e.target.files.length > 0) {
+                processIngestFile(e.target.files[0]);
+            }
+        });
+
+        // 2. Escuchador global para PEGAR datos directamente con Ctrl + V
+        window.addEventListener("paste", (e) => {
+            const pastedText = (e.clipboardData || window.clipboardData).getData("text");
+            if (pastedText.trim().length > 0) {
+                appendMessageBlock("user", `INJECT_PASTE // Detectada inyeccion desde el portapapeles (${pastedText.length} caracteres)`);
+                
+                const cleanedText = cleanStringUTF8(pastedText);
+                contextBuffer.push({ role: "user", content: `Analiza esta data que acabo de pegar directamente en el lienzo: \n${cleanedText}` });
+                applySlidingContextWindow();
+
+                appendMessageBlock("assistant", `SISTEMA // Datos pegados e ingestados con exito en la cache de la pestaña. El Discriminador de Rangos en Modo ${discriminator.value.toUpperCase()} esta listo para procesar el comando.`);
+            }
+        });
+
+        // Lector forense del archivo cargado (Peso Cero Serverless)
+        function processIngestFile(file) {
+            const reader = new FileReader();
+            const extension = file.name.split(".").pop().toLowerCase();
+            
+            appendMessageBlock("user", `INJECT_FILE // Cargando archivo desde explorador: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`);
+
+            reader.onload = function(event) {
+                let extractedText = "";
+                const rawResult = event.target.result;
+
+                if (extension === "json") {
+                    try {
+                        const parsed = JSON.parse(rawResult);
+                        extractedText = "DATOS JSON INGESTADOS:\n" + JSON.stringify(parsed, null, 2);
+                    } catch (err) {
+                        appendMessageBlock("assistant", "ERROR TRITURADOR // JSON Corrupto o mal estructurado.");
+                        return;
+                    }
+                } else if (extension === "csv") {
+                    extractedText = "REGISTROS CSV INGESTADOS:\n" + rawResult;
+                } else {
+                    extractedText = `CONTENIDO DEL DOCUMENTO (${file.name}):\n` + rawResult;
+                }
+
+                // Inyectar el texto extraido directamente en el buffer de contexto de la IA
+                const cleanedText = cleanStringUTF8(extractedText);
+                contextBuffer.push({ role: "user", content: `Analiza este archivo que acabo de cargar en el triturador ciego: \n${cleanedText}` });
+                applySlidingContextWindow();
+                
+                appendMessageBlock("assistant", `SISTEMA // Archivo triturado e ingestado con exito localmente en la cache de la pestaña. El Discriminador de Rangos en Modo ${discriminator.value.toUpperCase()} esta listo para procesar el comando sobre esta data.`);
+            };
+
+            // Ejecutar la lectura binaria o de texto plano en caliente
+            if (extension === "json" || extension === "csv" || extension === "txt") {
+                reader.readAsText(file, "UTF-8");
+            } else {
+                reader.readAsBinaryString(file);
+            }
+        }
     </script>
 </body>
 </html>
-
-
-
