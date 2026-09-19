@@ -1,6 +1,389 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>VERUMLEX AI</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}body{background-color:#ffffff;color:#1f1f1f;min-height:100vh;display:flex;flex-direction:column;overflow:hidden;padding:20px 32px;}.top-bar{display:flex;justify-content:space-between;align-items:center;width:100%;height:60px;padding:0 16px;border-bottom:1px solid #f1f3f4;}.brand-block{display:flex;align-items:center;gap:14px;animation:pulseBranding 3s infinite ease-in-out;}.logo-text-ven,.logo-text-ai{font-size:38px;font-weight:900;letter-spacing:-1.5px;color:#0f2d59;display:inline-block;line-height:1;}.logo-text-ai{margin-left:6px;}.core-badge{font-size:11px;font-weight:700;color:#5f6368;background-color:#f1f3f4;padding:5px 12px;border-radius:4px;font-family:monospace;letter-spacing:0.5px;}.control-group{display:flex;align-items:center;gap:8px;}.control-label{font-size:11px;font-weight:800;color:#5f6368;text-transform:uppercase;letter-spacing:0.5px;}.role-selector{appearance:none;background:#ffffff;border:1px solid #dadce0;border-radius:24px;color:#1f1f1f;padding:8px 36px 8px 20px;font-size:14px;font-weight:600;cursor:pointer;}.workspace-wrapper{display:flex;flex-grow:1;width:100%;height:calc(100vh - 120px);position:relative;margin-top:10px;}.panel{height:100%;display:flex;flex-direction:column;background:#ffffff;position:relative;}#panel-fuentes{width:22%;min-width:150px;max-width:400px;border:1px solid #dadce0;border-radius:20px;padding:24px;}#panel-chat{flex:1;min-width:350px;padding:0 32px;justify-content:space-between;align-items:center;}#panel-studio{width:28%;min-width:200px;max-width:600px;border:1px solid #dadce0;border-radius:20px;padding:24px;}</style>
-<style>.resizer{width:8px;height:100%;cursor:col-resize;background-color:transparent;transition:background-color 0.2s;margin:0 4px;border-radius:4px;}.resizer:hover,.resizer.dragging{background-color:#e8f0fe;border-left:2px solid #1a73e8;}.panel-title{font-size:14px;font-weight:800;text-transform:uppercase;color:#0f2d59;letter-spacing:0.5px;margin-bottom:20px;border-bottom:1px solid #f1f3f4;padding-bottom:10px;}.upload-rect-btn{width:100%;background-color:#ffffff;border:2px solid #3c4043;color:#1f1f1f;padding:14px;font-size:11px;font-weight:700;letter-spacing:1px;border-radius:8px;cursor:pointer;text-transform:uppercase;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.05);}.studio-log-text{font-size:11px;color:#1a1a1a;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding-top:4px;}.console-output{width:100%;text-align:center;margin-top:15px;margin-bottom:auto;transition:all 0.4s ease;}.status-tag{font-size:20px;font-weight:800;color:#1a73e8;text-transform:uppercase;margin-bottom:12px;letter-spacing:-0.5px;}.main-text{font-size:16px;line-height:1.6;color:#3c4043;max-width:720px;margin:0 auto;}.chat-history-area{width:100%;flex-grow:1;overflow-y:auto;padding:20px 0;display:flex;flex-direction:column;gap:16px;}.input-bar{display:flex;width:100%;background-color:#ffffff;border:1px solid #dadce0;border-radius:24px;padding:12px 20px;align-items:flex-end;box-shadow:0 4px 20px rgba(60,64,67,0.06);margin-top:auto;gap:16px;}.clip-btn{background:none;border:none;font-size:22px;color:#5f6368;cursor:pointer;padding-right:4px;flex-shrink:0;margin-bottom:4px;}.command-input{flex-grow:1;background:none;border:none;color:#1f1f1f;font-size:16px;width:100%;height:28px;max-height:120px;resize:none;overflow-y:auto;word-wrap:break-word;white-space:pre-wrap;margin-bottom:2px;}.command-input:focus{outline:none;}.execute-btn{background-color:#1a73e8;color:#ffffff;border:none;padding:10px 24px;font-size:14px;font-weight:700;border-radius:24px;cursor:pointer;transition:all 0.2s;flex-shrink:0;width:auto;min-width:100px;}#file-input{display:none;}@keyframes pulseBranding{0%{filter:drop-shadow(0 0 0px rgba(15,45,89,0));}50%{filter:drop-shadow(0 0 8px rgba(26,115,232,0.5));}100%{filter:drop-shadow(0 0 0px rgba(15,45,89,0));}}.upload-rect-btn:hover,.execute-btn:hover{background-color:#0f2d59 !important;color:#ffffff !important;border-color:#0f2d59 !important;box-shadow:0 4px 12px rgba(15,45,89,0.16) !important;transform:translateY(-1px) !important;}.input-bar:focus-within{border-color:#1a73e8 !important;box-shadow:0 4px 24px rgba(26,115,232,0.16) !important;}.upload-rect-btn,.execute-btn,.input-bar{transition:all 0.25s ease-in-out !important;}</style></head><body><header class="top-bar"><div class="brand-block"><span class="logo-text-ven">VERUMLEX</span><span class="logo-text-ai">AI</span><span class="core-badge">VCE_CORE // SERVERLESS</span></div><div style="display:flex;align-items:center;gap:20px;"><div class="control-group"><span class="control-label" id="lblLang">Language</span><select class="role-selector" id="langSelect" style="padding:8px 16px;border-radius:24px;"><option value="ES">ES</option><option value="EN">EN</option><option value="PT">PT</option><option value="ZH">ZH</option><option value="DE">DE</option></select></div><div class="control-group"><span class="control-label" id="lblRole">Role</span><select class="role-selector" id="roleSelect" style="padding:8px 36px 8px 20px;border-radius:24px;"><option value="PROFESIONAL">Modo Profesional</option><option value="CORPORATIVO">Modo Enterprise</option><option value="ESTUDIANTE">Modo Labs / Académico</option></select></div></div></header><div class="workspace-wrapper"><div id="panel-fuentes" class="panel"><div class="panel-title">FUENTES / ARCHIVOS</div><button class="upload-rect-btn" id="uploadRectBtn">Upload de Fuentes y Datos</button></div><div id="resizer-izq" class="resizer"></div><div id="panel-chat" class="panel"><div class="console-output" id="consoleOutput"><div class="status-tag" id="statusTag">Modo Profesional Activo // Copiloto Senior</div><p class="main-text" id="mainText">Ecosistema serverless de peso cero. El sistema permanece en modo pasivo listo para el acoplamiento de las matrices de red globales.</p></div><div class="chat-history-area" id="chatHistory"></div><div class="input-bar"><input type="file" id="file-input" multiple><button class="clip-btn" id="clipBtn">📎</button><textarea class="command-input" placeholder="Inyectar instrucción o comando al núcleo corporativo..." id="cmdInput" rows="1"></textarea><button class="execute-btn" id="execBtn">Ejecutar</button></div></div><div id="resizer-der" class="resizer"></div><div id="panel-studio" class="panel"><div class="panel-title">DESKTOP / ESCRITORIO</div><div class="studio-log-text" id="studioLog">RESUMENES / ESCRITOS</div></div></div><script>const roleSelect=document.getElementById("roleSelect");const statusTag=document.getElementById("statusTag");const mainText=document.getElementById("mainText");const clipBtn=document.getElementById("clipBtn");const uploadRectBtn=document.getElementById("uploadRectBtn");const fileInput=document.getElementById("file-input");const cmdInput=document.getElementById("cmdInput");const execBtn=document.getElementById("execBtn");const chatHistory=document.getElementById("chatHistory");const consoleOutput=document.getElementById("consoleOutput");const studioLog=document.getElementById("studioLog");const pFuentes=document.getElementById("panel-fuentes");const pStudio=document.getElementById("panel-studio");const resizerIzq=document.getElementById("resizer-izq");const resizerDer=document.getElementById("resizer-der");const wrapper=document.querySelector(".workspace-wrapper");const langSelect=document.getElementById("langSelect");const lblLang=document.getElementById("lblLang");const lblRole=document.getElementById("lblRole");
-const matrixPersonalities={ES:{PROFESIONAL:{tag:"Modo Profesional Activo // Copiloto Senior",text:"Ecosistema serverless configurado en Modo Consultor. La arquitectura optimiza la generación de estrategias corporativas, auditorías contractuales y planes de mercado.",log:"RESUMENES / ESCRITOS"},CORPORATIVO:{tag:"Modo Enterprise Activo // Auditor Forense Severo",text:"Matriz cognitiva ajustada para la Alta Dirección. El middleware prioriza de forma estricta el análisis duro de KPIs, control de SLAs y mitigación de riesgos financieros.",log:"AUDITORÍAS CRÍTICAS / INFORMES FORENSES"},ESTUDIANTE:{tag:"Modo Labs Activo // Mentor Académico",text:"Entorno de aprendizaje profundo activo. El núcleo desmenuza arquitecturas RAG, lógicas de ingeniería y estructuras complejas mediante lenguaje directo.",log:"CUESTIONARIOS / HOJAS DE RUTA ACADÉMICAS"}},EN:{PROFESIONAL:{tag:"Professional Mode Active // Senior Copilot",text:"Serverless ecosystem configured in Consultant Mode. The architecture optimizes the generation of corporate strategies, contractual audits, and market plans.",log:"SUMMARIES / WRITINGS"},CORPORATIVO:{tag:"Enterprise Mode Active // Severe Forensic Auditor",text:"Cognitive matrix adjusted for Senior Management. The middleware strictly prioritizes hard KPI analysis, SLA control, and mitigation of financial risks.",log:"CRITICAL AUDITS / FORENSIC REPORTS"},ESTUDIANTE:{tag:"Labs Mode Active // Academic Mentor",text:"Deep learning environment active. The core breaks down RAG architectures, engineering logic, and complex structures through direct language.",log:"QUIZZES / ACADEMIC ROADMAPS"}},PT:{PROFESIONAL:{tag:"Modo Profissional Ativo // Co-piloto Sênior",text:"Ecossistema serverless configurado no Modo Consultor. A arquitetura otimiza a geração de estrategias corporativas, auditorias contratuais e planos de mercado.",log:"RESUMOS / ESCRITOS"},CORPORATIVO:{tag:"Modo Enterprise Ativo // Auditor Forense Severo",text:"Matriz cognitiva ajustada para la Alta Direção. O middleware prioriza estritamente a análise dura de KPIs, controle de SLAs e mitigação de riscos financeiros.",log:"AUDITORIAS CRÍTICAS / RELATÓRIOS FORENSES"},ESTUDIANTE:{tag:"Modo Labs Ativo // Mentor Acadêmico",text:"Ambiente de aprendizado profundo activo. El núcleo analisa arquiteturas RAG, lógica de engenharia e estruturas complexes por meio de linguagem direta.",log:"QUESTIONÁRIOS / ROTEIROS ACADÊMICOS"}},
-ZH:{PROFESIONAL:{tag:"专业模式激活 // 高级副驾驶",text:"配置为顾问模式的无服务器生态系统。该架构优化了企业战略、合同审计和市场计划的生成。",log:"摘要 / 文章"},CORPORATIVO:{tag:"企业模式激活 // 严厉审计师",text:"为高级管理层调整的认知矩阵。中间件严格优先考虑关键 KPI 分析、SLA 控制以及财务风险缓解。",log:"关键审计 / 财务报告"},ESTUDIANTE:{tag:"实验室模式激活 // 学术导师",text:"深度学习环境处于激活状态。核心通过直接语言分解 RAG 架构、工程逻辑 and 复杂结构。",log:"测验 / 学术路线图"}},DE:{PROFESIONAL:{tag:"Professioneller Modus aktiv // Senior Copilot",text:"Serverloses Ökosystem im Beratermodus konfiguriert. Die Architektur optimiert die Erstellung von Unternehmensstrategien, Vertragsprüfungen und Marktplänen.",log:"ZUSAMMENFASSUNGEN / SCHRIFTSTÜCKE"},CORPORATIVO:{tag:"Enterprise-Modus aktiv // Strenger forensischer Prüfer",text:"Kognitive Matrix für das Top-Management angepasst. Die Middleware priorisiert strikt die harte KPI-Analyse, SLA-Kontrolle und Risikominderung.",log:"KRITISCHE AUDITS / FORENSISCHE BERICHTE"},ESTUDIANTE:{tag:"Labs-Modus aktiv // Akademischer Mentor",text:"Deep-Learning-Umgebung aktiv. Der Core zerlegt RAG-Architekturen, Logik und komplexe Strukturen durch direkte und verständliche Sprache.",log:"QUIZZES / AKADEMISCHE ROADMAPS"}}};const dict={ES:{titleFuentes:"FUENTES / ARCHIVOS",btnUpload:"Upload de Fuentes y Datos",titleStudio:"DESKTOP / ESCRITORIO",phInput:"Inyectar instrucción o comando al núcleo corporativo...",btnExec:"Ejecutar",labelLang:"Language",labelRole:"Role",rProf:"Modo Profesional",rCorp:"Modo Enterprise",rEst:"Modo Labs / Académico"},EN:{titleFuentes:"SOURCES / FILES",btnUpload:"Upload Sources and Data",titleStudio:"DESKTOP / WORKSPACE",phInput:"Inject instruction or command to the corporate core...",btnExec:"Execute",labelLang:"Language",labelRole:"Role",rProf:"Professional Mode",rCorp:"Enterprise Mode",rEst:"Labs Mode"},PT:{titleFuentes:"FONTES / ARQUIVOS",btnUpload:"Upload de Fontes e Dados",titleStudio:"DESKTOP / ESCRITÓRIO",phInput:"Injetar instrução ou comando al núcleo corporativo...",btnExec:"Executar",labelLang:"Idioma",labelRole:"Função",rProf:"Modo Profissional",rCorp:"Modo Enterprise",rEst:"Modo Labs"},ZH:{titleFuentes:"来源 / 文件",btnUpload:"上传来源与数据",titleStudio:"桌面 / 工作区",phInput:"向企业核心注入指令或命令...",btnExec:"执行",labelLang:"语言",labelRole:"角色",rProf:"专业模式",rCorp:"企业模式",rEst:"实验室模式"},DE:{titleFuentes:"QUELLEN / DATEIEN",btnUpload:"Quellen und Daten hochladen",titleStudio:"DESKTOP / ARBEITSBEREICH",phInput:"Anweisung oder Befehl in den Unternehmens-Core einspeisen...",btnExec:"Ausführen",labelLang:"Sprache",labelRole:"Rolle",rProf:"Professioneller Modus",rCorp:"Enterprise-Modus",rEst:"Labs / Akademischer Modus"}};function updateUI(){const l=langSelect.value;const m=roleSelect.value;pFuentes.querySelector(".panel-title").textContent=dict[l].titleFuentes;uploadRectBtn.textContent=dict[l].btnUpload;pStudio.querySelector(".panel-title").textContent=dict[l].titleStudio;cmdInput.placeholder=dict[l].phInput;execBtn.textContent=dict[l].btnExec;lblLang.textContent=dict[l].labelLang;lblRole.textContent=dict[l].labelRole;roleSelect.options[0].text=dict[l].rProf;roleSelect.options[1].text=dict[l].rCorp;roleSelect.options[2].text=dict[l].rEst;statusTag.textContent=matrixPersonalities[l][m].tag;mainText.textContent=matrixPersonalities[l][m].text;studioLog.textContent=matrixPersonalities[l][m].log;}
-langSelect.addEventListener("change",updateUI);roleSelect.addEventListener("change",updateUI);clipBtn.addEventListener("click",()=>{fileInput.click();});uploadRectBtn.addEventListener("click",()=>{fileInput.click();});fileInput.addEventListener("change",(e)=>{if(e.target.files.length>0)alert("[ INFRAESTRUCTURA SERVERLESS ]: Archivos asimilados.");});execBtn.addEventListener("click",()=>{const prompt=cmdInput.value.trim();if(!prompt)return;mainText.style.fontSize="13px";mainText.style.color="#80868b";consoleOutput.style.removeProperty("margin-top");consoleOutput.style.marginBottom="5px";const userBox=document.createElement("div");userBox.style.fontSize="16px";userBox.style.lineHeight="1.6";userBox.style.color="#1f1f1f";userBox.style.textAlign="justify";userBox.style.borderLeft="4px solid #1a73e8";userBox.style.paddingLeft="16px";userBox.innerHTML=`<strong>&gt;_ </strong>${prompt}`;chatHistory.appendChild(userBox);cmdInput.value="";cmdInput.style.height="28px";chatHistory.scrollTop=chatHistory.scrollHeight;const aiBox=document.createElement("div");aiBox.style.fontSize="15px";aiBox.style.lineHeight="1.6";aiBox.style.color="#3c4043";aiBox.style.marginTop="12px";aiBox.style.background="#f8f9fa";aiBox.style.padding="14px";aiBox.style.borderRadius="8px";aiBox.innerHTML=`<strong>AI:</strong> [ SIMULACIÓN SERVERLESS ]: Respuesta analítica procesada con éxito a escala global en la web pública de peso cero bytes de por vida.`;chatHistory.appendChild(aiBox);chatHistory.scrollTop=chatHistory.scrollHeight;});let activeResizer=null;resizerIzq.addEventListener("mousedown",()=>{activeResizer="izq";resizerIzq.classList.add("dragging");document.body.style.cursor="col-resize";});resizerDer.addEventListener("mousedown",()=>{activeResizer="der";resizerDer.classList.add("dragging");document.body.style.cursor="col-resize";});window.addEventListener("mousemove",(e)=>{if(!activeResizer)return;const wrapperRect=wrapper.getBoundingClientRect();if(activeResizer==="izq"){let wIzq=e.clientX-wrapperRect.left;if(wIzq>150&&wIzq<400)pFuentes.style.width=wIzq+"px";}else if(activeResizer==="der"){let wDer=wrapperRect.right-e.clientX;if(wDer>200&&wDer<600)pStudio.style.width=wDer+"px";}});window.addEventListener("mouseup",()=>{if(!activeResizer)return;resizerIzq.classList.remove("dragging");resizerDer.classList.remove("dragging");activeResizer=null;document.body.style.cursor="default";});cmdInput.addEventListener("input",function(){this.style.height="auto";this.style.height=(this.scrollHeight)+"px";});</script><script src="core-connector.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VERUMLEX AI — Repertorio Commercial v1.0</title>
+    <style>
+        :root {
+            --bg-canvas: #ffffff;
+            --ultramarine-deep: #0f2d59;
+            --carbon-dense: #1a1a1a;
+            --slate-titanium: #64748b;
+            --border-light: rgba(15, 45, 89, 0.08);
+            --font-premium: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-canvas);
+            font-family: var(--font-premium);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Cintillo Superior Premium */
+        .master-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 40px;
+            border-bottom: 1px solid var(--border-light);
+            background: #ffffff;
+            height: 75px;
+            flex-shrink: 0;
+        }
+
+        .brand-logo {
+            font-size: 38px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: var(--ultramarine-deep);
+            font-family: sans-serif;
+            user-select: none;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .control-pill-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15, 45, 89, 0.02);
+            border: 1px solid var(--border-light);
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        .pill-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--slate-titanium);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .dropdown-premium {
+            background: none;
+            border: none;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ultramarine-deep);
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Arquitectura Panorámica de 3 Fajas Elásticas Core */
+        .workspace-canvas {
+            flex: 1;
+            display: flex;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .panel-left {
+            width: 22%;
+            min-width: 15%;
+            max-width: 40%;
+            background: #ffffff;
+            border-right: 1px solid var(--border-light);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .panel-center {
+            flex: 1;
+            background: #ffffff;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .panel-right {
+            width: 28%;
+            min-width: 20%;
+            max-width: 45%;
+            background: var(--carbon-dense);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-shrink: 0;
+            color: #ffffff;
+        }
+
+        .panel-title-left {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: var(--ultramarine-deep);
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 12px;
+        }
+
+        .panel-title-right {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            color: #ffffff;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .btn-upload-premium {
+            background: #ffffff;
+            border: 2px solid var(--carbon-dense);
+            color: var(--carbon-dense);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn-upload-premium:hover {
+            background: var(--ultramarine-deep);
+            color: #ffffff;
+            border-color: var(--ultramarine-deep);
+        }
+
+        .role-status-bar {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--slate-titanium);
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+
+        .conversation-stream {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Barra Gemini Inferior Estilizada Horizontal Fija */
+        .gemini-control-pod {
+            display: flex;
+            align-items: center;
+            background: rgba(15, 45, 89, 0.02);
+            border: 2px solid var(--ultramarine-deep);
+            border-radius: 28px;
+            padding: 6px 16px;
+            gap: 12px;
+            margin-top: 16px;
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        .clip-icon {
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--slate-titanium);
+            user-select: none;
+        }
+
+        .kernel-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: #000000;
+            font-size: 14px;
+            font-family: var(--font-premium);
+        }
+
+        .btn-execute-premium {
+            background: var(--ultramarine-deep);
+            border: none;
+            color: #ffffff;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-execute-premium:hover {
+            background: #1d4ed8;
+        }
+
+        /* Divisores Elásticos */
+        .resizer {
+            width: 8px;
+            height: 100%;
+            cursor: col-resize;
+            background: transparent;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .resizer:hover, .resizer.active {
+            background: rgba(15, 45, 89, 0.05);
+        }
+
+        .log-content {
+            font-size: 12px;
+            font-family: monospace;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CINTILLO SUPERIOR MANDATARIO -->
+    <header class="master-header">
+        <div class="brand-logo">VERUMLEX AI</div>
+        <div class="header-controls">
+            <div class="control-pill-group">
+                <span class="pill-label" id="lblLang">Language</span>
+                <select class="dropdown-premium" id="langSelector">
+                    <option value="ES" selected>ES</option>
+                    <option value="EN">EN</option>
+                    <option value="PT">PT</option>
+                    <option value="ZH">ZH</option>
+                    <option value="DE">DE</option>
+                </select>
+            </div>
+            <div class="control-pill-group">
+                <span class="pill-label" id="lblRole">Role</span>
+                <select class="dropdown-premium" id="rangeDiscriminator">
+                    <option value="PROFESIONAL" selected>Modo Profesional</option>
+                    <option value="CORPORATIVO">Modo Corporativo</option>
+                    <option value="ESTUDIANTE">Modo Estudiante</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- ARQUITECTURA PANORÁMICA DE TRES FAJAS EQUILIBRADAS -->
+    <div class="workspace-canvas">
+        
+        <!-- Faja Izquierda: Fuentes de Información -->
+        <main class="panel-left" id="panelLeft">
+            <div class="panel-title-left" id="lblFuentes">Fuentes / Archivos</div>
+            <div>
+                <button class="btn-upload-premium" id="btnUpload">Upload de Fuentes y Datos</button>
+                <input type="file" id="fileInput" style="display: none;" multiple>
+            </div>
+        </main>
+
+        <div class="resizer" id="resizerLeft"></div>
+
+        <!-- Faja Central Workspace: Contenedor Jerárquico Hermético -->
+        <main class="panel-center" id="panelCenter">
+            <div class="role-status-bar" id="lblStatus">Ecosistema serverless de peso cero. El sistema permanece en modo pasivo listo para el acoplamiento de las matrices de red globales.</div>
+            <div class="conversation-stream" id="centerWorkspace"></div>
+            
+            <footer class="gemini-control-pod">
+                <div class="clip-icon" id="clipBtn">📎</div>
+                <input type="text" class="kernel-input" id="kernelInput" placeholder="Inyectar instrucción o comando al núcleo corporativo..." autocomplete="off">
+                <button class="btn-execute-premium" id="execBtn">EJECUTAR</button>
+            </footer>
+        </main>
+
+        <div class="resizer" id="resizerRight"></div>
+
+        <!-- Faja Derecha: Escritorio Log -->
+        <aside class="panel-right" id="panelRight">
+            <div class="panel-title-right" id="lblDesktop">Desktop / Escritorio</div>
+            <div class="log-content" id="rightLogZone">RESUMENES / ESCRITOS</div>
+        </aside>
+    </div>
+
+    <!-- SCRIPT DE CONTROL ELÁSTICO E IDIOMAS -->
+    <script>
+        const INTERFACE_LOCALIZATION = {
+            ES: { fuentes: "Fuentes / Archivos", upload: "Upload de Fuentes y Datos", status: "Ecosistema serverless de peso cero. El sistema permanece en modo pasivo.", desktop: "Desktop / Escritorio", inputPlaceholder: "Inyectar instrucción o comando al núcleo corporativo..." },
+            EN: { fuentes: "Sources / Files", upload: "Upload Sources and Data", status: "Zero-weight serverless ecosystem. System remains in passive mode.", desktop: "Desktop / Workspace", inputPlaceholder: "Inject instruction or command into corporate core..." },
+            PT: { fuentes: "Fontes / Arquivos", upload: "Upload de Fontes e Dados", status: "Ecossistema serverless de peso zero. O sistema permanece em modo passivo.", desktop: "Desktop / Área de Trabalho", inputPlaceholder: "Injetar instrução ou comando no núcleo corporativo..." },
+            ZH: { fuentes: "来源 / 文件", upload: "上传来源和数据", status: "零重量无服务器生态系统。系统保持被动模式。", desktop: "桌面 / 工作区", inputPlaceholder: "向企业核心注入指令..." },
+            DE: { fuentes: "Quellen / Dateien", upload: "Quellen und Daten hochladen", status: "Gewichtsneutrales serverless Ökosystem. System bleibt im passiven Modus.", desktop: "Desktop / Arbeitsbereich", inputPlaceholder: "Anweisung oder Befehl in den Corporate Core einspeisen..." }
+        };
+
+        const langSelect = document.getElementById("langSelector");
+        const roleSelect = document.getElementById("rangeDiscriminator");
+        const cmdInput = document.getElementById("kernelInput");
+        const chatHistory = document.getElementById("centerWorkspace");
+        const execBtn = document.getElementById("execBtn");
+
+        const updateUI = () => {
+            const lang = langSelect.value;
+            const dict = INTERFACE_LOCALIZATION[lang] || INTERFACE_LOCALIZATION.ES;
+            document.getElementById("lblFuentes").innerText = dict.fuentes;
+            document.getElementById("btnUpload").innerText = dict.upload;
+            document.getElementById("lblStatus").innerText = `${roleSelect.value} // ${dict.status}`;
+            document.getElementById("lblDesktop").innerText = dict.desktop;
+            cmdInput.placeholder = dict.inputPlaceholder;
+        };
+
+        langSelect.addEventListener("change", updateUI);
+        roleSelect.addEventListener("change", updateUI);
+
+        const setupResizer = (resizerId, panelId, isRight = false) => {
+            const resizer = document.getElementById(resizerId);
+            const panel = document.getElementById(panelId);
+            if (!resizer || !panel) return;
+            resizer.addEventListener("mousedown", (e) => {
+                e.preventDefault(); resizer.classList.add("active");
+                const doDrag = (moveEvent) => {
+                    if (!isRight) {
+                        const newWidth = (moveEvent.clientX / window.innerWidth) * 100;
+                        if (newWidth > 12 && newWidth < 40) panel.style.width = `${newWidth}%`;
+                    } else {
+                        const newWidth = ((window.innerWidth - moveEvent.clientX) / window.innerWidth) * 100;
+                        if (newWidth > 18 && newWidth < 45) panel.style.width = `${newWidth}%`;
+                    }
+                };
+                const stopDrag = () => {
+                    resizer.classList.remove("active");
+                    document.removeEventListener("mousemove", doDrag);
+                    document.removeEventListener("mouseup", stopDrag);
+                };
+                document.addEventListener("mousemove", doDrag);
+                document.addEventListener("mouseup", stopDrag);
+            });
+        };
+        setupResizer("resizerLeft", "panelLeft");
+        setupResizer("resizerRight", "panelRight", true);
+
+        const clipBtn = document.getElementById("clipBtn");
+        const fileInput = document.getElementById("fileInput");
+        if (clipBtn && fileInput) { clipBtn.addEventListener("click", () => fileInput.click()); }
+    </script>
+</body>
+</html>
